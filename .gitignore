@@ -1,0 +1,48 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.pt
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Environment & config files
+*.env
+.env.*
+.DS_Store
+
+# VSCode & JetBrains IDE configs
+.vscode/
+.idea/
+
+# Model weights and checkpoints
+*.pth
+*.pt
+
+# Streamlit specific
+.streamlit/config.toml
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Logs and misc
+*.log
+
+# Ignore generated folders if needed
+#test_images/
+#models/
+
+# Requirements file (uncomment if you're tracking with Pipenv or Poetry)
+# Pipfile
+# Pipfile.lock
+# poetry.lock

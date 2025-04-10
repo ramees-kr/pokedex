@@ -1,0 +1,116 @@
+# 🌟 Deep Learning Project: Pokemon Image Classifier with Streamlit Pokédex
+
+## 🔎 Objective
+To build and deploy a deep learning-based image classification application that can identify Pokemon from images and display relevant Pokédex information in an interactive Streamlit web interface.
+
+---
+
+## ✅ Completed Steps
+
+### 1. **Dataset Setup**
+- Used the 7,000-labeled Pokemon dataset with images organized by class folders (e.g., `PokemonData/Abra/`, `PokemonData/Bulbasaur/`...).
+- Verified and structured the dataset for compatibility with PyTorch `ImageFolder` style loading.
+- Copied 1 image per class to a new folder `test_images/` for use in the Streamlit interface.
+
+### 2. **Model Development**
+- Implemented the training pipeline in a Jupyter notebook.
+- Defined and trained the following model architectures:
+  - `SimpleCNN`
+  - `PretrainedResNet18`
+  - `PretrainedDenseNet121`
+  - `PretrainedMobileNetV2`
+- Used transfer learning with frozen layers (except final classifier layers).
+- Applied data augmentation: resize, crop, flip, color jitter, and rotation.
+- Trained all models for 12 epochs.
+- Saved the best models in `.pth` format into the `models/` folder.
+
+### 3. **Class Mapping**
+- Generated `class_names.txt` with all class labels (Pokemon names), sorted in the same order used during training.
+
+### 4. **Pokédex Metadata Integration**
+- Sourced a public `pokedex.json` file.
+- Converted it into a dictionary keyed by each Pokemon's English name.
+- Extracted fields: `name`, `type`, `base` stats, and optionally `description`.
+
+### 5. **Streamlit App Development**
+- Developed `app.py` with the following layout:
+  - **Left Sidebar**:
+    - Model selector
+    - Image selector from `test_images/`
+    - Thumbnail preview of selected image
+    - Expandable Pokédex panel
+  - **Main Panel**:
+    - Display selected image
+    - Show predicted Pokemon name and confidence score
+  - **Right Sidebar (Pokedex Panel)**:
+    - Display type, stats, and description of the predicted Pokemon
+- Preprocessing matches the model's input: resizing and conversion to tensor.
+- Models are dynamically loaded using `torch.load()`.
+
+### 6. **Environment Setup**
+- Created `.venv/` using Python virtual environment.
+- Installed required packages:
+  ```bash
+  pip install streamlit torch torchvision pillow
+  ```
+- Provided instructions to freeze requirements using:
+  ```bash
+  pip freeze > requirements.txt
+  ```
+
+### 7. **.gitignore Setup**
+Created `.gitignore` with rules to exclude:
+- Bytecode
+- Virtual environments
+- Model weight files (.pth)
+- IDE config files
+- Image checkpoints & logs
+
+---
+
+## 🚀 How to Run
+
+1. **Activate Environment** (if not already active):
+   ```bash
+   source .venv/bin/activate
+   ```
+
+2. **Run App:**
+   ```bash
+   streamlit run app.py
+   ```
+
+3. **Usage:**
+   - Select a model (e.g., DenseNet121)
+   - Choose an image
+   - View the prediction and Pokédex info instantly
+
+---
+
+## 💡 Next Steps / Enhancements
+- Add drag-and-drop image upload for user-supplied inference
+- Enable real-time predictions with webcam input (optional)
+- Improve Pokédex JSON with descriptions or images
+- Deploy on **Streamlit Cloud** or **Hugging Face Spaces** for public access
+- Add visualization of confidence scores per class (bar chart)
+
+---
+
+## 📁 Project Structure
+```
+pokemon_recognition/
+├── app.py
+├── class_names.txt
+├── pokedex.json
+├── .gitignore
+├── requirements.txt  (optional)
+├── models/
+│   ├── best_model_ResNet18.pth
+│   ├── best_model_DenseNet121.pth
+│   ├── best_model_SimpleCNN.pth
+│   └── model_MobileNetV2.pth
+├── test_images/
+│   ├── Pikachu_abc123.jpg
+│   ├── Charmander_xyz456.jpg
+│   └── ...
+```

@@ -1,0 +1,144 @@
+# 📊 Pokemon Image Classification - Training Code Documentation
+
+This document captures the key components and logic used in the model training notebook for the Pokemon classification project.
+
+---
+
+## 🔍 Dataset Overview
+- **Source:** A labeled dataset with ~7000 images of different Pokemon species.
+- **Structure:**
+  - Images are stored in `PokemonData/<class_name>/image.jpg` format.
+  - Each subfolder represents one class (e.g., `Abra`, `Pikachu`, etc.).
+
+---
+
+## 📓 Data Preparation
+
+### 1. **Imports and Setup**
+```python
+import os
+import torch
+import numpy as np
+from PIL import Image
+import torchvision.transforms as transforms
+from torch.utils.data import Dataset, DataLoader
+from sklearn.model_selection import train_test_split
+```
+
+### 2. **Label Mapping**
+- Created `label_to_idx` and `idx_to_label` dictionaries from sorted folder names.
+
+### 3. **Train/Test Split**
+```python
+X, y = np.array(image_paths), np.array(image_labels)
+train_X, test_X, train_y, test_y = train_test_split(X, y, stratify=y, test_size=0.2)
+```
+
+### 4. **Transforms**
+```python
+train_transform = transforms.Compose([
+    transforms.Resize((138, 138)),
+    transforms.RandomCrop(128),
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomRotation(15),
+    transforms.ColorJitter(brightness=0.3, contrast=0.3),
+    transforms.ToTensor(),
+])
+
+test_transform = transforms.Compose([
+    transforms.Resize((128, 128)),
+    transforms.ToTensor(),
+])
+```
+
+---
+
+## 👤 Dataset Class
+```python
+class PokemonDataset(Dataset):
+    def __init__(self, image_paths, labels, transform=None):
+        self.image_paths = image_paths
+        self.labels = torch.tensor(labels)
+        self.transform = transform
+
+    def __getitem__(self, idx):
+        img = Image.open(self.image_paths[idx]).convert('RGB')
+        return self.transform(img), self.labels[idx], self.image_paths[idx]
+```
+
+---
+
+## 🏋️ Model Architectures
+
+### 1. **SimpleCNN**
+```python
+Conv2d(3, 32) → ReLU → MaxPool
+Conv2d(32, 64) → ReLU → MaxPool
+Flatten → Dense(128) → Output
+```
+
+### 2. **Pretrained Models (Transfer Learning)**
+- `ResNet18`
+- `DenseNet121`
+- `MobileNetV2`
+- Common adjustments:
+  - All feature extractors are frozen.
+  - Classifier head is replaced with a final layer for `num_classes`.
+
+---
+
+## 🏋️ Training Loop
+
+### 1. **Loss and Optimizer**
+```python
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+```
+
+### 2. **Epoch Loop**
+```python
+for epoch in range(num_epochs):
+    model.train()
+    for batch in train_loader:
+        # Forward pass → compute loss → backpropagate → update
+```
+
+### 3. **Evaluation**
+```python
+model.eval()
+preds, targets = [], []
+for batch in test_loader:
+    with torch.no_grad():
+        outputs = model(batch)
+        preds.append(torch.argmax(outputs))
+```
+
+### 4. **Metrics**
+- `accuracy_score`
+- `f1_score`
+- `confusion_matrix`
+
+---
+
+## 📂 Saved Models
+- Best models saved as `.pth` files in `models/`:
+  - `best_model_SimpleCNN.pth`
+  - `best_model_ResNet18.pth`
+  - `best_model_DenseNet121.pth`
+  - `model_MobileNetV2.pth`
+
+---
+
+## 🔄 Comparison
+- Models were trained for **12 epochs**.
+- Evaluation metrics logged and plotted.
+- MobileNetV2 underperformed slightly and was not saved as the "best" model.
+- Final best model: **DenseNet121**
+
+---
+
+## 🔧 Ready for Streamlit Integration
+- Class mapping file: `class_names.txt`
+- Sample test images: `test_images/`
+- Preprocessing matches inference transforms.
+
