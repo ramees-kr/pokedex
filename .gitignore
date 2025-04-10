@@ -24,7 +24,7 @@ venv/
 .idea/
 
 # Model weights and checkpoints
-*.pth
+#*.pth
 *.pt
 
 # Streamlit specific
